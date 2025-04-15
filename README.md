@@ -216,3 +216,8 @@ networks:
 - Comando para construir y levantar con Podman Compose:
 `podman compose up --build`
 
+## 🧩 Estructura de la Carpeta
+
+![Captura de pantalla 2025-04-14 193237](https://github.com/user-attachments/assets/a22c9b0c-0437-423f-a34e-b5a6794b6f8d)
+
+
