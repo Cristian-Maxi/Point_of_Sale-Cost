@@ -25,7 +25,7 @@ Este proyecto es una implementación de una arquitectura de microservicios basad
 
 ## 📌 Módulo: Punto de Venta (Point of Sale)
 
-Este módulo forma parte de una arquitectura de microservicios, y está diseñado para gestionar los Puntos de Venta de una organización. Su propósito es ofrecer una API REST que permita registrar, consultar, actualizar, eliminar y listar puntos de venta activos de forma eficiente, utilizando una base de datos relacional (JPA) para la persistencia y Redis como capa de caché para mejorar el rendimiento de las consultas.
+Este módulo forma parte de una arquitectura de microservicios, y está diseñado para gestionar los Puntos de Venta. Su propósito es ofrecer una API REST que permita registrar, consultar, actualizar, eliminar y listar puntos de venta activos de forma eficiente, utilizando una base de datos relacional (JPA) para la persistencia y Redis como capa de caché para mejorar el rendimiento de las consultas.
 
 ### ⚙️ Características Técnicas
 
@@ -51,7 +51,7 @@ Este módulo forma parte de una arquitectura de microservicios, y está diseñad
 
 ## 📌 Módulo: Costos (Cost)
 
-Este módulo forma parte de una arquitectura de microservicios, y está diseñado para gestionar los Costos asociados a productos, servicios u operaciones de la organización. Su propósito es ofrecer una API REST que permita registrar, consultar, actualizar, eliminar y listar costos activos de manera eficiente, con persistencia en base de datos relacional (JPA) y cacheo de datos activos utilizando Redis para mejorar el rendimiento de las consultas frecuentes.
+Este módulo forma parte de una arquitectura de microservicios, y está diseñado para gestionar los Costos asociados los puntos de venta. Su propósito es ofrecer una API REST que permita agregar un costo a dos puntos de ventas determinados, eliminar el costo de dos puntos de ventas determinados, consultar el costo de un punto venta determinado y encontrar el costo minimo entre 2 puntos de ventas utilizando el algoritmo dijkstra, todo esto de manera eficiente, con persistencia en base de datos relacional (JPA) y cacheo de datos activos utilizando Redis para mejorar el rendimiento de las consultas frecuentes.
 
 ### ⚙️ Características Técnicas
 
@@ -65,13 +65,12 @@ Este módulo forma parte de una arquitectura de microservicios, y está diseñad
 
 ### 🔁 Endpoints del Controlador `CostController`
 
-| Método | Endpoint                  | Descripción |
-|--------|---------------------------|-------------|
-| POST   | `/api/cost/add`           | Crea un nuevo costo. |
-| GET    | `/api/cost/{id}`          | Devuelve detalle de un costo (con Redis). |
-| GET    | `/api/cost/getAll`        | Lista todos los costos activos. |
-| PUT    | `/api/cost/update`        | Actualiza parcialmente un costo. |
-| DELETE | `/api/cost/delete/{id}`   | Baja lógica de un costo. |
+| Método | Endpoint                        | Descripción |
+|--------|---------------------------------|-------------|
+| POST   | `/api/cost/add`                 | Permita agregar un costo a dos puntos de ventas.  |
+| GET    | `/api/cost/direct/{id}`         | Consultar el costo de un punto venta determinado. |
+| PUT    | `/api/cost/minimum/{idA}/{idB}` | Encontrar el costo mínimo entre 2 puntos de venta. |
+| DELETE | `/api/cost/delete/{idA}/{idB}`  | Eliminar el costo de dos puntos de ventas. |
 
 ---
 
