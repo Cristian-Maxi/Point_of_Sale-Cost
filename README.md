@@ -76,7 +76,7 @@ Este módulo forma parte de una arquitectura de microservicios, y está diseñad
 ---
 
 ## 🔄 Flujo General
-
+```
 Client
   ⬇
 Controller (Valida DTO)
@@ -88,7 +88,7 @@ Mapper (MapStruct)
 Entity ↔ Repository (JPA)
   ⬇
 Redis Cache (Hash por ID)
-
+```
 ---
 
 ## 🚀 Levantar el Proyecto con Podman Compose
@@ -106,7 +106,7 @@ SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=postgres
 ```
 
-- cocker-compose.yml:
+- docker-compose.yml:
 
 ```
 version: '3.8'
