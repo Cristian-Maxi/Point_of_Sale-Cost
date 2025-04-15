@@ -35,15 +35,11 @@ public class PontOfSaleController {
 
     @GetMapping("/getAll")
     public ResponseEntity<ApiResponseDTO<PointOfSaleResponseDTO>> getAllPointOfSales() {
-        try{
-            List<PointOfSaleResponseDTO> pointOfSaleResponse = pointOfSaleService.getAll();
-            if(pointOfSaleResponse.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponseDTO<>(false, "Point Of Sales NOT FOUND", pointOfSaleResponse), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ApiResponseDTO<>(true, "Point Of Sales FOUND", pointOfSaleResponse), HttpStatus.OK);
-            }
-        } catch (ApplicationException e) {
-            throw new ApplicationException(" An error has occurred " + e.getMessage());
+        List<PointOfSaleResponseDTO> pointOfSaleResponse = pointOfSaleService.getAll();
+        if(pointOfSaleResponse.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponseDTO<>(false, "Point Of Sales NOT FOUND", pointOfSaleResponse), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ApiResponseDTO<>(true, "Point Of Sales FOUND", pointOfSaleResponse), HttpStatus.OK);
         }
     }
 

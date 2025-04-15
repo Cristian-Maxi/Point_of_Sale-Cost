@@ -3,7 +3,7 @@ package com.microservice.pointsalecost.services.Impl;
 import com.microservice.pointsalecost.dtos.CostDTO.*;
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.PointOfSaleResponseDTO;
 import com.microservice.pointsalecost.enums.CacheType;
-import com.microservice.pointsalecost.exceptions.ApplicationException;
+import com.microservice.pointsalecost.exceptions.*;
 import com.microservice.pointsalecost.mappers.CostMapper;
 import com.microservice.pointsalecost.mappers.PointOfSaleMapper;
 import com.microservice.pointsalecost.models.Cost;
@@ -45,11 +45,11 @@ public class CostServiceImpl implements CostService {
     @Override
     public CostResponseDTO save(CostRequestDTO costRequestDTO) {
         if (costRequestDTO.idA().equals(costRequestDTO.idB())) {
-            throw new ApplicationException("Cannot Add a Cost Between a Point and Itself");
+            throw new InvalidCostException("Cannot add a cost between a point and itself.");
         }
 
         if (costRequestDTO.amount() < 0) {
-            throw new IllegalArgumentException("The Ammount cannot be Negative");
+            throw new InvalidCostException("The amount cannot be negative.");
         }
 
         validatePointsExist(costRequestDTO);
@@ -69,11 +69,11 @@ public class CostServiceImpl implements CostService {
         boolean existsB = pointOfSaleRepository.existsById(dto.idB());
 
         if (!existsA && !existsB) {
-            throw new ApplicationException("Point Of Sale A or B Not Found: " + dto.idA() + " and " + dto.idB());
+            throw new PointOfSaleNotFoundException("Point of Sale A or B not found: " + dto.idA() + " and " + dto.idB());
         } else if (!existsA) {
-            throw new ApplicationException("Point of Sale A Not Found: " + dto.idA());
+            throw new PointOfSaleNotFoundException("Point of Sale A not found: " + dto.idA());
         } else if (!existsB) {
-            throw new ApplicationException("Point of Sale B Not Found: " + dto.idB());
+            throw new PointOfSaleNotFoundException("Point of Sale B not found: " + dto.idB());
         }
     }
 
@@ -81,12 +81,12 @@ public class CostServiceImpl implements CostService {
         String key = keyGenerator(dto.idA(), dto.idB());
 
         if (costHashOperations.hasKey(CacheType.COST.getValues(), key)) {
-            throw new IllegalArgumentException("The Cost Between These Two Points Already Exists in Cache");
+            throw new CostAlreadyExistsException("The cost between these two points already exists in cache.");
         }
 
         CostID costId = new CostID(dto.idA(), dto.idB());
         if (costRepository.existsById(costId)) {
-            throw new IllegalArgumentException("The Cost Between These Two Points Already Exists in Database");
+            throw new CostAlreadyExistsException("The cost between these two points already exists in database.");
         }
     }
 
@@ -102,7 +102,7 @@ public class CostServiceImpl implements CostService {
         } else if (costRepository.existsById(costId)) {
             costRepository.deleteById(costId);
         } else {
-            throw new ApplicationException("There is NO Cost Between " + idA + " and " + idB);
+            throw new CostNotFoundException("There is NO cost between " + idA + " and " + idB);
         }
     }
 
@@ -129,7 +129,7 @@ public class CostServiceImpl implements CostService {
         PointOfSale pointOfSale_B = obtainPointOfSale(idB);
 
         if (!isPointOfSaleValid(pointOfSale_A) || !isPointOfSaleValid(pointOfSale_B)) {
-            throw new ApplicationException("Points of Sales Are Inactive Or Do NOT Exist");
+            throw new InactivePointOfSaleException("Points of sales are inactive or do not exist.");
         }
 
         Map<String, Cost> costsInCache = costHashOperations.entries(CacheType.COST.getValues());

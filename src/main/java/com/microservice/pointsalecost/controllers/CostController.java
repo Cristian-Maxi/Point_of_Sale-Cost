@@ -33,11 +33,9 @@ public class CostController {
     @GetMapping("/direct/{id}")
     public ResponseEntity<ApiResponseDTO<CostResponseDTO>> getDirectCostsFromPoint(@PathVariable Long id) {
         List<CostResponseDTO> costResponseList = costService.directCostFromOnePoint(id);
-        if (costResponseList.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponseDTO<>(false, "No Direct Costs Found From Point " + id, costResponseList), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new ApiResponseDTO<>(true, "Direct Costs Found", costResponseList), HttpStatus.OK);
-        }
+        boolean success = !costResponseList.isEmpty();
+        String message = success ? "Direct Costs Found" : "No Direct Costs Found From Point " + id;
+        return new ResponseEntity<>(new ApiResponseDTO<>(success, message, costResponseList), HttpStatus.OK);
     }
 
     @GetMapping("/minimum/{idA}/{idB}")

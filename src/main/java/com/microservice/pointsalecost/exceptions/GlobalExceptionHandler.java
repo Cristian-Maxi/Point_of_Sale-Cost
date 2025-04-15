@@ -1,5 +1,6 @@
 package com.microservice.pointsalecost.exceptions;
 
+import com.microservice.pointsalecost.dtos.ApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,22 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT, message);
         return new ResponseEntity<>(errorResponse, errorResponse.status());
+    }
+
+    @ExceptionHandler(PointOfSaleNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO<String>> handlePointOfSaleNotFound(PointOfSaleNotFoundException ex) {
+        return new ResponseEntity<>(new ApiResponseDTO<>(false, ex.getMessage(), null), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RedisCacheMissException.class)
+    public ResponseEntity<ApiResponseDTO<String>> handleRedisMiss(RedisCacheMissException ex) {
+        return new ResponseEntity<>(new ApiResponseDTO<>(false, ex.getMessage(), null), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponseDTO<String>> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(new ApiResponseDTO<>(false, "Unexpected Error: " + ex.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)

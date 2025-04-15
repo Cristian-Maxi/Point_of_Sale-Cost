@@ -3,6 +3,8 @@ package com.microservice.pointsalecost.services.Impl;
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.*;
 import com.microservice.pointsalecost.enums.CacheType;
 import com.microservice.pointsalecost.exceptions.ApplicationException;
+import com.microservice.pointsalecost.exceptions.PointOfSaleNotFoundException;
+import com.microservice.pointsalecost.exceptions.RedisCacheMissException;
 import com.microservice.pointsalecost.mappers.PointOfSaleMapper;
 import com.microservice.pointsalecost.models.PointOfSale;
 import com.microservice.pointsalecost.repositories.PointOfSaleRepository;
@@ -55,7 +57,7 @@ public class PointOfSaleServiceImpl implements PointOfSaleService {
         PointOfSale pointOfSale = pointOfSaleHashOperations.get(CacheType.POINT_OF_SALE.getValues(), id.toString());
         if (pointOfSale == null) {
             pointOfSale = pointOfSaleRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Point Of Sale not Found: " + id));
+                    .orElseThrow(() -> new PointOfSaleNotFoundException("Point of Sale not found with ID: " + id));
 
             if (pointOfSale.isActive()) {
                 pointOfSaleHashOperations.put(CacheType.POINT_OF_SALE.getValues(), id.toString(), pointOfSale);
@@ -95,11 +97,11 @@ public class PointOfSaleServiceImpl implements PointOfSaleService {
         Long deleteCache = pointOfSaleHashOperations.delete(CacheType.POINT_OF_SALE.getValues(), id.toString());
 
         if(deleteCache.equals(0L)) {
-            throw new ApplicationException("Point of Sale ID Not Found in REDIS" + id);
+            throw new RedisCacheMissException("Point of Sale ID not found in Redis: " + id);
         }
 
         PointOfSale pointOfSale = pointOfSaleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Point of Sale ID Not Found"));
+                .orElseThrow(() -> new PointOfSaleNotFoundException("Point of Sale not found with ID: " + id));
 
         pointOfSale.setActive(false);
         pointOfSaleRepository.save(pointOfSale);
