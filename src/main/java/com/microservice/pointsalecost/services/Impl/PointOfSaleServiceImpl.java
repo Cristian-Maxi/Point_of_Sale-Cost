@@ -2,7 +2,6 @@ package com.microservice.pointsalecost.services.Impl;
 
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.*;
 import com.microservice.pointsalecost.enums.CacheType;
-import com.microservice.pointsalecost.exceptions.ApplicationException;
 import com.microservice.pointsalecost.exceptions.PointOfSaleNotFoundException;
 import com.microservice.pointsalecost.exceptions.RedisCacheMissException;
 import com.microservice.pointsalecost.mappers.PointOfSaleMapper;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PointOfSaleServiceImpl implements PointOfSaleService {
@@ -55,7 +55,7 @@ public class PointOfSaleServiceImpl implements PointOfSaleService {
     @Override
     public PointOfSaleResponseDTO findById(Long id) {
         PointOfSale pointOfSale = pointOfSaleHashOperations.get(CacheType.POINT_OF_SALE.getValues(), id.toString());
-        if (pointOfSale == null) {
+        if (Objects.isNull(pointOfSale)) {
             pointOfSale = pointOfSaleRepository.findById(id)
                     .orElseThrow(() -> new PointOfSaleNotFoundException("Point of Sale not found with ID: " + id));
 
