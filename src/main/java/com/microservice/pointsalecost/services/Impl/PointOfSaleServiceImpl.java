@@ -23,9 +23,9 @@ import java.util.List;
 public class PointOfSaleServiceImpl implements PointOfSaleService {
 
     @Autowired
-    PointOfSaleRepository pointOfSaleRepository;
+    private PointOfSaleRepository pointOfSaleRepository;
     @Autowired
-    PointOfSaleMapper pointOfSaleMapper;
+    private PointOfSaleMapper pointOfSaleMapper;
 
     private final HashOperations<String, String, PointOfSale> pointOfSaleHashOperations;
 
