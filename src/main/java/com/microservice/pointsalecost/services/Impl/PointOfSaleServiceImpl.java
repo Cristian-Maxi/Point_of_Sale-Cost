@@ -10,7 +10,6 @@ import com.microservice.pointsalecost.repositories.PointOfSaleRepository;
 import com.microservice.pointsalecost.services.PointOfSaleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,14 +21,13 @@ import java.util.Objects;
 @Service
 public class PointOfSaleServiceImpl implements PointOfSaleService {
 
-    @Autowired
-    private PointOfSaleRepository pointOfSaleRepository;
-    @Autowired
-    private PointOfSaleMapper pointOfSaleMapper;
-
+    private final PointOfSaleRepository pointOfSaleRepository;
+    private final PointOfSaleMapper pointOfSaleMapper;
     private final HashOperations<String, String, PointOfSale> pointOfSaleHashOperations;
 
-    public PointOfSaleServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+    public PointOfSaleServiceImpl(PointOfSaleRepository pointOfSaleRepository, PointOfSaleMapper pointOfSaleMapper, RedisTemplate<String, Object> redisTemplate) {
+        this.pointOfSaleRepository = pointOfSaleRepository;
+        this.pointOfSaleMapper = pointOfSaleMapper;
         this.pointOfSaleHashOperations = redisTemplate.opsForHash();
     }
 

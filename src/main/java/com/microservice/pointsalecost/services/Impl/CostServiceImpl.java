@@ -13,7 +13,6 @@ import com.microservice.pointsalecost.repositories.CostRepository;
 import com.microservice.pointsalecost.repositories.PointOfSaleRepository;
 import com.microservice.pointsalecost.services.CostService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,19 +23,18 @@ import java.util.stream.Collectors;
 @Service
 public class CostServiceImpl implements CostService {
 
-    @Autowired
-    private CostRepository costRepository;
-    @Autowired
-    private PointOfSaleRepository pointOfSaleRepository;
-    @Autowired
-    private CostMapper costMapper;
-    @Autowired
-    private PointOfSaleMapper pointOfSaleMapper;
-
+    private final CostRepository costRepository;
+    private final PointOfSaleRepository pointOfSaleRepository;
+    private final CostMapper costMapper;
+    private final PointOfSaleMapper pointOfSaleMapper;
     private final HashOperations<String, String, PointOfSale> pointOfSaleHashOperations;
     private final HashOperations<String, String, Cost> costHashOperations;
 
-    public CostServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+    public CostServiceImpl(CostRepository costRepository, PointOfSaleRepository pointOfSaleRepository, CostMapper costMapper, PointOfSaleMapper pointOfSaleMapper, RedisTemplate<String, Object> redisTemplate) {
+        this.costRepository = costRepository;
+        this.pointOfSaleRepository = pointOfSaleRepository;
+        this.costMapper = costMapper;
+        this.pointOfSaleMapper = pointOfSaleMapper;
         this.pointOfSaleHashOperations = redisTemplate.opsForHash();
         this.costHashOperations = redisTemplate.opsForHash();
     }
@@ -77,7 +75,7 @@ public class CostServiceImpl implements CostService {
         }
     }
 
-    private void validateCostNotExists(CostRequestDTO dto) {
+    public void validateCostNotExists(CostRequestDTO dto) {
         String key = keyGenerator(dto.idA(), dto.idB());
 
         if (costHashOperations.hasKey(CacheType.COST.getValues(), key)) {
