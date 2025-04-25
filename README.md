@@ -266,3 +266,32 @@ networks:
 Endpoint swagger: http://localhost:8080/swagger-ui/index.html
 
 ![Point of Sale - Cost Swagger](https://github.com/user-attachments/assets/58ec01f5-f806-4b99-a680-87a1f6dd94d4)
+
+
+## 📊 Diagrama de clases
+
+
+```mermaid
+
+classDiagram
+direction LR
+    class PointOfSale {
+	    Long id
+	    String name
+	    boolean active
+    }
+
+    class CostID {
+	    Long idA
+	    Long idB
+    }
+
+    class Cost {
+	    CostID id
+	    Double amount
+	    +getIdA() Long
+	    +getIdB() Long
+    }
+
+    PointOfSale <.. Cost : idA, idB
+    Cost --> CostID : embeddedId
