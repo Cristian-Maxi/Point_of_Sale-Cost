@@ -14,6 +14,7 @@ import com.microservice.pointsalecost.mappers.CostMapper;
 import com.microservice.pointsalecost.mappers.PointOfSaleMapper;
 import com.microservice.pointsalecost.models.Cost;
 import com.microservice.pointsalecost.models.CostID;
+import com.microservice.pointsalecost.models.PointOfSale;
 import com.microservice.pointsalecost.repositories.CostRepository;
 import com.microservice.pointsalecost.repositories.PointOfSaleRepository;
 import com.microservice.pointsalecost.services.Impl.CostServiceImpl;
@@ -189,4 +190,25 @@ public class CostServiceImplTest {
         verify(costHashOperations, times(1)).hasKey(anyString(), anyString());
         verify(costRepository, times(1)).existsById(any(CostID.class));
     }
+
+    @Test
+    public void testValidatePointsExist() {
+        CostRequestDTO dto = new CostRequestDTO(1L, 2L, 100.0);
+
+        when(pointOfSaleRepository.existsById(1L)).thenReturn(true);
+        when(pointOfSaleRepository.existsById(2L)).thenReturn(true);
+
+        assertDoesNotThrow(() -> costService.validatePointsExist(dto));
+    }
+
+    @Test
+    void testIsPointOfSaleValid() {
+        PointOfSale validPoint = new PointOfSale(1L, "Point1", true);
+        PointOfSale inactivePoint = new PointOfSale(2L, "Point2", false);
+
+        assertTrue(costService.isPointOfSaleValid(validPoint), "El punto debe ser válido.");
+        assertFalse(costService.isPointOfSaleValid(inactivePoint), "El punto no debe ser válido si está inactivo.");
+        assertFalse(costService.isPointOfSaleValid(null), "Null no debe ser un punto válido.");
+    }
+
 }

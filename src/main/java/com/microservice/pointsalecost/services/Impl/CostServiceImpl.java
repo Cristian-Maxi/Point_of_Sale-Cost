@@ -62,7 +62,7 @@ public class CostServiceImpl implements CostService {
         return costMapper.toCostResponseDTO(saved);
     }
 
-    private void validatePointsExist(CostRequestDTO dto) {
+    public void validatePointsExist(CostRequestDTO dto) {
         boolean existsA = pointOfSaleRepository.existsById(dto.idA());
         boolean existsB = pointOfSaleRepository.existsById(dto.idB());
 
@@ -144,18 +144,18 @@ public class CostServiceImpl implements CostService {
         return searchCostMinimumPath(graphStructure, idA, idB);
     }
 
-    private boolean isPointOfSaleValid(PointOfSale pos) {
+    public boolean isPointOfSaleValid(PointOfSale pos) {
         return pos != null && pos.isActive();
     }
 
-    private PointOfSale obtainPointOfSale(Long id) {
+    public PointOfSale obtainPointOfSale(Long id) {
         String key = id.toString();
         return pointOfSaleHashOperations.hasKey(CacheType.POINT_OF_SALE.getValues(), key)
                 ? pointOfSaleHashOperations.get(CacheType.POINT_OF_SALE.getValues(), key)
                 : pointOfSaleRepository.findById(id).orElse(null);
     }
 
-    private Map<Long, Map<Long, Double>> graphBuilder(Map<String, Cost> costs) {
+    public Map<Long, Map<Long, Double>> graphBuilder(Map<String, Cost> costs) {
         Map<Long, Map<Long, Double>> graphStructure = new HashMap<>();
 
         for (Cost cost : costs.values()) {
@@ -171,7 +171,7 @@ public class CostServiceImpl implements CostService {
     }
 
 
-    private CostMinimumDTO searchCostMinimumPath(Map<Long, Map<Long, Double>> graph, Long from, Long to) {
+    public CostMinimumDTO searchCostMinimumPath(Map<Long, Map<Long, Double>> graph, Long from, Long to) {
         PriorityQueue<Nodo> queue = new PriorityQueue<>(Comparator.comparingDouble(n -> n.amount));
         //Minimum cost from the starting point to each node.
         Map<Long, Double> minimumCost = new HashMap<>();
@@ -208,7 +208,7 @@ public class CostServiceImpl implements CostService {
         return null;
     }
 
-    private CostMinimumDTO costMinimumPathResponse(Long to, Map<Long, Long> previous, Double totalCost) {
+    public CostMinimumDTO costMinimumPathResponse(Long to, Map<Long, Long> previous, Double totalCost) {
         List<PointOfSaleResponseDTO> pointOfSaleList = new LinkedList<>();
         for (Long current = to; current != null; current = previous.get(current)) {
             PointOfSale pointOfSale = pointOfSaleHashOperations.get(CacheType.POINT_OF_SALE.getValues(), current.toString());
@@ -219,7 +219,7 @@ public class CostServiceImpl implements CostService {
 
     private record Nodo(Long id, Double amount) {}
 
-    private static String keyGenerator(Long idA, Long idB) {
+    public static String keyGenerator(Long idA, Long idB) {
         return idA < idB ? idA + "-" + idB : idB + "-" + idA;
     }
 }

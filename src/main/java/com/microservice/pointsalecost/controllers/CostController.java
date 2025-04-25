@@ -2,7 +2,7 @@ package com.microservice.pointsalecost.controllers;
 
 import com.microservice.pointsalecost.dtos.ApiResponseDTO;
 import com.microservice.pointsalecost.dtos.CostDTO.*;
-import com.microservice.pointsalecost.exceptions.ApplicationException;
+import com.microservice.pointsalecost.enums.RoleEnum;
 import com.microservice.pointsalecost.services.CostService;
 import com.microservice.pointsalecost.utils.RoleValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,11 @@ import java.util.List;
 @Tag(name = "Cost", description = "Endpoints for managing cost relationships between Points of Sale")
 public class CostController {
 
-    @Autowired
-    private CostService costService;
+    private final CostService costService;
+
+    public CostController(CostService costService) {
+        this.costService = costService;
+    }
 
     @PostMapping("/add")
     @Operation(summary = "Add Cost", description = "Adds a new cost relationship between two Points of Sale. Only ADMIN role is allowed.")
@@ -33,7 +35,7 @@ public class CostController {
             @ApiResponse(responseCode = "400", description = "Invalid request")})
     public ResponseEntity<ApiResponseDTO<CostResponseDTO>> addCost(@RequestBody @Valid CostRequestDTO costRequestDTO,
                                                                    @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to add a cost", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to add a cost", RoleEnum.ADMIN);
         CostResponseDTO costResponseDTO = costService.save(costRequestDTO);
         return new ResponseEntity<>(new ApiResponseDTO<>(true, "Cost Added Successfully", costResponseDTO), HttpStatus.CREATED);
     }
@@ -46,7 +48,7 @@ public class CostController {
             @ApiResponse(responseCode = "404", description = "Cost relationship not found")})
     public ResponseEntity<ApiResponseDTO<String>> deleteCost(@PathVariable Long idA, @PathVariable Long idB,
                                                              @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to delete a cost", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to delete a cost", RoleEnum.ADMIN);
         costService.delete(idA, idB);
         return new ResponseEntity<>(new ApiResponseDTO<>(true, "Cost Deleted Successfully", "Deleted cost between " + idA + " and " + idB), HttpStatus.OK);
     }
@@ -59,7 +61,7 @@ public class CostController {
             @ApiResponse(responseCode = "404", description = "No direct costs found")})
     public ResponseEntity<ApiResponseDTO<CostResponseDTO>> getDirectCostsFromPoint(@PathVariable Long id,
                                                                                    @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to delete a user", "ADMIN", "CLIENT");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to delete a user", RoleEnum.ADMIN, RoleEnum.CLIENT);
         List<CostResponseDTO> costResponseList = costService.directCostFromOnePoint(id);
         boolean success = !costResponseList.isEmpty();
         String message = success ? "Direct Costs Found" : "No Direct Costs Found From Point " + id;
@@ -74,7 +76,7 @@ public class CostController {
             @ApiResponse(responseCode = "404", description = "No minimum cost path found")})
     public ResponseEntity<ApiResponseDTO<CostMinimumDTO>> getMinimumCostPath(@PathVariable Long idA, @PathVariable Long idB,
                                                                              @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to get the minimum cost path", "ADMIN", "CLIENT");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to get the minimum cost path", RoleEnum.ADMIN, RoleEnum.CLIENT);
         CostMinimumDTO costMinimumDTO = costService.minimumCostPath(idA, idB);
         if (costMinimumDTO == null || costMinimumDTO.pointOfSaleResponse().isEmpty()) {
             return new ResponseEntity<>(new ApiResponseDTO<>(false, "No Minimum Cost Path Found", null), HttpStatus.NOT_FOUND);

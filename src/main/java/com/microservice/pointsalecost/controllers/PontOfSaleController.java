@@ -4,7 +4,7 @@ import com.microservice.pointsalecost.dtos.ApiResponseDTO;
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.PointOfSaleRequestDTO;
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.PointOfSaleResponseDTO;
 import com.microservice.pointsalecost.dtos.PointOfSaleDTO.PointOfSaleUpdateDTO;
-import com.microservice.pointsalecost.exceptions.ApplicationException;
+import com.microservice.pointsalecost.enums.RoleEnum;
 import com.microservice.pointsalecost.services.PointOfSaleService;
 import com.microservice.pointsalecost.utils.RoleValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,11 @@ import java.util.List;
 @Tag(name = "Point Of Sale", description = "Endpoints for managing point of sale entities")
 public class PontOfSaleController {
 
-    @Autowired
-    private PointOfSaleService pointOfSaleService;
+    private final PointOfSaleService pointOfSaleService;
+
+    public PontOfSaleController(PointOfSaleService pointOfSaleService) {
+        this.pointOfSaleService = pointOfSaleService;
+    }
 
     @PostMapping("/add")
     @Operation(summary = "Add Point of Sale", description = "Adds a new Point of Sale. Only ADMIN role is allowed.")
@@ -36,7 +38,7 @@ public class PontOfSaleController {
             @ApiResponse(responseCode = "400", description = "Invalid request")})
     public ResponseEntity<ApiResponseDTO<PointOfSaleResponseDTO>> addPointOfSale(@RequestBody @Valid PointOfSaleRequestDTO pointOfSaleRequestDTO,
                                                                                  @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to add a Point of Sale", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to add a Point of Sale", RoleEnum.ADMIN);
         PointOfSaleResponseDTO responseDTO = pointOfSaleService.save(pointOfSaleRequestDTO);
         return new ResponseEntity<>(new ApiResponseDTO<>(true, "Point Of Sale Added", responseDTO), HttpStatus.CREATED);
     }
@@ -49,7 +51,7 @@ public class PontOfSaleController {
             @ApiResponse(responseCode = "404", description = "Point of Sale not found")})
     public ResponseEntity<ApiResponseDTO<PointOfSaleResponseDTO>> getPointOfSale(@PathVariable Long id, @RequestHeader("X-User-Authorities") String roles) {
 
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to get a specific Point of Sale", "ADMIN", "CLIENT");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN or CLIENT to get a specific Point of Sale", RoleEnum.ADMIN, RoleEnum.CLIENT);
         PointOfSaleResponseDTO pointOfSale = pointOfSaleService.findById(id);
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "Point Of Sale Found", pointOfSale));
     }
@@ -60,7 +62,7 @@ public class PontOfSaleController {
             @ApiResponse(responseCode = "200", description = "List of Points of Sale returned successfully"),
             @ApiResponse(responseCode = "403", description = "Access denied")})
     public ResponseEntity<ApiResponseDTO<PointOfSaleResponseDTO>> getAllPointOfSales(@RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to get all Point of Sale", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to get all Point of Sale", RoleEnum.ADMIN);
         List<PointOfSaleResponseDTO> pointOfSaleResponse = pointOfSaleService.getAll();
         if(pointOfSaleResponse.isEmpty()) {
             return new ResponseEntity<>(new ApiResponseDTO<>(false, "Point Of Sales NOT FOUND", pointOfSaleResponse), HttpStatus.OK);
@@ -77,7 +79,7 @@ public class PontOfSaleController {
             @ApiResponse(responseCode = "400", description = "Invalid request")})
     public ResponseEntity<ApiResponseDTO<PointOfSaleResponseDTO>> updatePointOfSale(@RequestBody @Valid PointOfSaleUpdateDTO pointOfSaleUpdateDTO,
                                                                                     @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to update a Point of Sale", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to update a Point of Sale", RoleEnum.ADMIN);
         PointOfSaleResponseDTO updatedPointOfSale = pointOfSaleService.update(pointOfSaleUpdateDTO);
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "Point Of Sale Updated", updatedPointOfSale));
     }
@@ -89,7 +91,7 @@ public class PontOfSaleController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Point of Sale not found")})
     public ResponseEntity<?> deletePontOfSale(@PathVariable Long id, @RequestHeader("X-User-Authorities") String roles) {
-        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to delete a Point of Sale", "ADMIN");
+        RoleValidator.validateRole(roles,"Access denied: You must be an ADMIN to delete a Point of Sale", RoleEnum.ADMIN);
         pointOfSaleService.delete(id);
         String message = "Point of Sale Successfully Deleted";
         return new ResponseEntity<>(message, HttpStatus.OK);

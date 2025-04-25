@@ -104,6 +104,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, errorResponse.status());
     }
 
+    @ExceptionHandler(InactivePointOfSaleException.class)
+    public ResponseEntity<ErrorResponse> handleInactivePointOfSaleException(InactivePointOfSaleException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage()),
+                HttpStatus.CONFLICT
+        );
+    }
+
     public record ErrorResponse(HttpStatus status, String message, List<String> errors) {
         public ErrorResponse(HttpStatus status, String message) {
             this(status, message, null);

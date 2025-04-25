@@ -5,7 +5,8 @@ import com.microservice.pointsalecost.models.Cost;
 import com.microservice.pointsalecost.models.PointOfSale;
 import com.microservice.pointsalecost.repositories.CostRepository;
 import com.microservice.pointsalecost.repositories.PointOfSaleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
@@ -19,15 +20,15 @@ import java.util.List;
 @Component
 public class CacheDataInitializer {
 
-    @Autowired
-    private PointOfSaleRepository pointOfSaleRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CacheDataInitializer.class);
 
-    @Autowired
-    private CostRepository costRepository;
-
+    private final PointOfSaleRepository pointOfSaleRepository;
+    private final CostRepository costRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public CacheDataInitializer(RedisTemplate<String, Object> redisTemplate) {
+    public CacheDataInitializer(PointOfSaleRepository pointOfSaleRepository, CostRepository costRepository, RedisTemplate<String, Object> redisTemplate) {
+        this.pointOfSaleRepository = pointOfSaleRepository;
+        this.costRepository = costRepository;
         this.redisTemplate = redisTemplate;
     }
 
@@ -56,19 +57,19 @@ public class CacheDataInitializer {
         List<PointOfSale> savedPointOfSaleData;
         if (pointOfSaleRepository.count() == 0) {
             savedPointOfSaleData = pointOfSaleRepository.saveAll(pointOfSaleData);
-            System.out.println("Point of Sale saved in DB");
+            logger.info("Point of Sale saved in DB");
         } else {
             savedPointOfSaleData = pointOfSaleRepository.findAll();
-            System.out.println("Point of Sale already exists in DB");
+            logger.info("Point of Sale already exists in DB");
         }
 
         HashOperations<String, String, PointOfSale> hashOps = redisTemplate.opsForHash();
         if (hashOps.size(CacheType.POINT_OF_SALE.getValues()) == 0) {
             savedPointOfSaleData.forEach(pos ->
                     hashOps.put(CacheType.POINT_OF_SALE.getValues(), pos.getId().toString(), pos));
-            System.out.println("Point of Sale Cache Initialized");
+            logger.info("Point of Sale Cache Initialized");
         } else {
-            System.out.println("Point of Sale Cache Already Initialized");
+            logger.info("Point of Sale Cache Already Initialized");
         }
     }
 
@@ -92,9 +93,9 @@ public class CacheDataInitializer {
 
         if (costRepository.count() == 0) {
             costRepository.saveAll(costData);
-            System.out.println("Cost data saved in DB");
+            logger.info("Cost data saved in DB");
         } else {
-            System.out.println("Cost data already exists in DB");
+            logger.info("Cost data already exists in DB");
         }
 
         HashOperations<String, String, Cost> hashOps = redisTemplate.opsForHash();
@@ -103,9 +104,9 @@ public class CacheDataInitializer {
                 String key = cost.getIdA() + "-" + cost.getIdB();
                 hashOps.put(CacheType.COST.getValues(), key, cost);
             });
-            System.out.println("Cost Cache Initialized");
+            logger.info("Cost Cache Initialized");
         } else {
-            System.out.println("Cost Cache Already Initialized");
+            logger.info("Cost Cache Already Initialized");
         }
     }
 
@@ -113,6 +114,6 @@ public class CacheDataInitializer {
     public void cleanCache() {
         redisTemplate.delete(CacheType.POINT_OF_SALE.getValues());
         redisTemplate.delete(CacheType.COST.getValues());
-        System.out.println("Cleaning CACHE");
+        logger.info("Cleaning CACHE");
     }
 }
