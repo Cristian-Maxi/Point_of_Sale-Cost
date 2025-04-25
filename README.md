@@ -242,4 +242,27 @@ networks:
 
 ## ✅ Estructura de la Carpeta
 
-![Captura de pantalla 2025-04-14 193237.png](../../../Pictures/Screenshots/Captura%20de%20pantalla%202025-04-14%20193237.png)
+![Estructura de carpetas](https://github.com/user-attachments/assets/b6ff7ad2-9a19-40d1-93d3-4d98b37054b8)
+
+
+# ⚙️ Test unitarios
+
+## Jacoco + informe en HTML
+
+
+![point of sale JaCoCo test](https://github.com/user-attachments/assets/8091e33b-9546-4816-b59a-40420dd319c3)
+
+
+##  Sonar Qube
+
+![Sonar Qube pointofsalecost New Code](https://github.com/user-attachments/assets/f5221f8c-6527-4432-bce0-cb748291a29d)
+
+![Sonar Qube pointofsalecost Overall Code](https://github.com/user-attachments/assets/6b2cc522-143f-4c96-ac46-6378aaa18015)
+
+
+## 🧩 Swagger | Open API
+
+
+Endpoint swagger: http://localhost:8080/swagger-ui/index.html
+
+![Point of Sale - Cost Swagger](https://github.com/user-attachments/assets/58ec01f5-f806-4b99-a680-87a1f6dd94d4)
