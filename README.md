@@ -318,4 +318,4 @@ direction LR
 
 ## 💻​ Diagrama del Flujo General de la Aplicación
 
-![Diagrama del Flujo General](https://github.com/user-attachments/assets/2d034514-c1a8-4201-88cf-3f7eaa2979ff)
+![Diagrama del Flujo General](https://github.com/user-attachments/assets/c9106c67-a151-4f4c-9fb2-b2c6f1630faa)
