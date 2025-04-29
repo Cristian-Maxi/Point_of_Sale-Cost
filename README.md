@@ -313,3 +313,9 @@ direction LR
 
     PointOfSale <.. Cost : idA, idB
     Cost --> CostID : embeddedId
+
+```
+
+## 💻​ Diagrama del Flujo General de la Aplicación
+
+![Diagrama del Flujo General](https://github.com/user-attachments/assets/2d034514-c1a8-4201-88cf-3f7eaa2979ff)
