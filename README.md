@@ -74,7 +74,7 @@ Este módulo forma parte de una arquitectura de microservicios, y está diseñad
 |--------|---------------------------------|-------------|
 | POST   | `/api/cost/add`                 | Permita agregar un costo a dos puntos de ventas.  |
 | GET    | `/api/cost/direct/{id}`         | Consultar el costo de un punto venta determinado. |
-| PUT    | `/api/cost/minimum/{idA}/{idB}` | Encontrar el costo mínimo entre 2 puntos de venta. |
+| GET    | `/api/cost/minimum/{idA}/{idB}` | Encontrar el costo mínimo entre 2 puntos de venta. |
 | DELETE | `/api/cost/delete/{idA}/{idB}`  | Eliminar el costo de dos puntos de ventas. |
 
 ---
