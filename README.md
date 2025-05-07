@@ -286,7 +286,6 @@ Endpoint swagger: http://localhost:8080/swagger-ui/index.html
 
 ![Point of Sale - Cost Swagger](https://github.com/user-attachments/assets/58ec01f5-f806-4b99-a680-87a1f6dd94d4)
 
-
 ## 📊 Diagrama de clases
 
 
@@ -320,3 +319,7 @@ direction LR
 ## 💻​ Diagrama del Flujo General de la Aplicación
 
 ![Diagrama del Flujo General](https://github.com/user-attachments/assets/c9106c67-a151-4f4c-9fb2-b2c6f1630faa)
+
+## 🏃‍♂️​​​ Zipkin para seguimiento de las solicitudes y trazabilidad
+
+![Zipkin](https://github.com/user-attachments/assets/daa36e3e-bae7-4e6a-bb7c-dded3890336b)
